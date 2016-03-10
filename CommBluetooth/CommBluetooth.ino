@@ -9,8 +9,8 @@
 #include <prismino.h>
 #include <Bluetooth.h>
 
-#define COMM Serial
-//#define COMM Bluetooth
+//#define COMM Serial
+#define COMM Bluetooth
 
 #define LEDF 11
 
@@ -22,8 +22,6 @@ bool on = 0;
 void setup() {
 
   pinMode(LEDF, OUTPUT);
-  //COMM.setName("OKeep");
-  //COMM.setPass("1234");
   COMM.begin(9600);
 
 }
