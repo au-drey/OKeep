@@ -5,14 +5,10 @@
  *
  ***************************************************************************************/
 
-
-#include <prismino.h>
-#include <Bluetooth.h>
-
 //#define COMM Serial
-#define COMM Bluetooth
+#define COMM Serial1
 
-#define LEDF 11
+#define LEDF 10
 
 char cmd;
 
@@ -39,12 +35,14 @@ void loop() {
           analogWrite(LEDF, 0);
           on = 0;
           COMM.print("OFF\n");
+          delay(500);
         }
         else
         {
           analogWrite(LEDF, 180);
           on  = 1;
           COMM.print("ON\n");
+          delay(500);
         }
         break;
 
