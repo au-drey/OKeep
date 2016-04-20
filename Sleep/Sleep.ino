@@ -1,10 +1,14 @@
+//////////////////////////////////////////////
+/// MARCHE PAS
+/// INT0 = pin3 sur Blueduino !
+//////////////////////////////////////////////
 #include <avr/sleep.h>
  
 /* Pin2 go LOW activating INT0 external interrupt, bringing the MCU back to life
  * Also a time counter that will put the MCU to sleep after 10 secs
  */
  
-int wakePin = 2;                 // pin used for waking up
+int wakePin = 3;                 // pin used for waking up
 int sleepStatus = 0;             // variable to store a request for sleep
 int count = 0;                   // counter
 
@@ -35,7 +39,7 @@ void setup()
   digitalWrite(LEDR, LOW);
  
   Serial.begin(9600);
- 
+  sleep_disable();
   delay(8000);
   Serial.println("Initialisation complete.");
 }
@@ -54,16 +58,16 @@ void sleepNow()         // here we put the arduino to sleep
   delay(100);
   
   Serial.println("Interrupt attached");
+  delay(100);
   set_sleep_mode(SLEEP_MODE_PWR_DOWN);   // sleep mode is set here
   Serial.println("sleep mode set");
-  sleep_enable();          // enables the sleep bit in the mcucr register so sleep is possible. just a safety pin
-  Serial.println("sleep enabled");
- 
-  Serial.println("Sleep now");
+  delay(100);
+  //sleep_enable();          // enables the sleep bit in the mcucr register so sleep is possible. just a safety pin
+  
   sleep_mode();            // here the device is actually put to sleep!!
   
   // THE PROGRAM CONTINUES FROM HERE AFTER WAKING UP
-  sleep_disable();         // first thing after waking from sleep: disable sleep...
+  //sleep_disable();         // first thing after waking from sleep: disable sleep...
   //detachInterrupt(0);      // disables interrupt 0 on pin 2 so the
                              // wakeUpNow code will not be executed
                              // during normal running time.
