@@ -42,16 +42,21 @@ void loop()
       else
         acc = 0;*/
 
-      Serial.print("#S|LOGACC|[");
+      /*Serial.print("#S|LOGACC|[");
       Serial.print(itoa((x), buffer, 10));
       Serial.print(" ");
       Serial.print(itoa((y), buffer, 10));
       Serial.print(" ");
       Serial.print(itoa((z), buffer, 10));
-      Serial.println("]#");
+      Serial.println("]#");*/
       
-      delay(2000);
-      COMM.print("Sent values to Gobetwino\n");
+      delay(1000);
+      COMM.print(x);
+      COMM.print("\t");
+      COMM.print(y);
+      COMM.print("\t");
+      COMM.println(z);
+      //COMM.print("Sent values to Gobetwino\n");
       delay(250);
       if(COMM.available())
         record = false;
@@ -66,7 +71,6 @@ void loop()
     {
       case 'a':
         record = true;
-        COMM.println(record);
         break;
 
     }
