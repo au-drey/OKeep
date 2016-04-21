@@ -1,16 +1,14 @@
 /***************************************************************************************
  *
  * Title:       Blinker
- * Description: De/Activates the blinker with the buttons
+ * Description: De/Activates the blinker via Bluetooth
+ * (Buttons send info to phone which then sends to helmet)
  *
  ***************************************************************************************/
 #define LEDF 5
 #define LEDB 16
 #define LEDR 8
 #define LEDL 9
-#define BUTTONR 7 // problem : pin 7 needed for INT6
-#define BUTTONL 10
-#define BUTTONC 6
 
 #define COMM Serial1
 
@@ -28,9 +26,6 @@ void setup()
   pinMode(LEDB, OUTPUT);
   pinMode(LEDL, OUTPUT);
   pinMode(LEDR, OUTPUT);
-  pinMode(BUTTONR,INPUT);
-  pinMode(BUTTONL,INPUT);
-  pinMode(BUTTONC,INPUT);
   
   digitalWrite(LEDF, LOW);
   digitalWrite(LEDB, LOW);
