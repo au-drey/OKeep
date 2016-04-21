@@ -27,12 +27,17 @@ void enterSleep(void)
   /* The program will continue from here. */
   
   /* First thing to do is disable sleep. */
-  sleep_disable(); 
+  sleep_disable();
 }
 
 void setup()
 {
   Serial.begin(9600);
+
+  /*DDRD &= B00000011;  // pins 2-7 as inputs, 0 and 1 (RX and TX) not changed
+  DDRB = B00000000;   // pins 8-13 as inputs
+  PORTD |= B11111100; // enable pullups on pins 2-7, leaves 0 and 1 alone
+  PORTB |= B11111111; // enable pullups on pins 8-13*/
   
   pinMode(pin2, INPUT);
   pinMode(LEDR, OUTPUT);
@@ -43,7 +48,7 @@ void setup()
 int seconds = 0;
 void loop()
 {
-  //delay(2000);
+  delay(1000);
   seconds++;
 
   for(i=0; i<seconds;i++)
