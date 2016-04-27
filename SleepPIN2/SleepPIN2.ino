@@ -4,13 +4,21 @@
 
 #include <avr/sleep.h>
 #include <avr/power.h>
+#include <avr/wdt.h>
 
 int pin2 = 2;
 int i;
 #define LEDR 7
 
+volatile int f_wdt = 0;
+
 void pin2Interrupt(void)
 {
+}
+
+ISR(WDT_vect)
+{
+  f_wdt += 1;
 }
 
 void enterSleep(void)
@@ -41,8 +49,9 @@ void setup()
   
   pinMode(pin2, INPUT);
   pinMode(LEDR, OUTPUT);
-  //delay(8000);
-  //Serial.println("Initialisation complete.");
+
+  // setup the watchdog timer
+  MCUSR &= ~(1<<WDRF);
 }
 
 int seconds = 0;
