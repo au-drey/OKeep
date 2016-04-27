@@ -10,7 +10,7 @@ int pin2 = 2;
 int i;
 #define LEDR 7
 
-volatile int f_wdt = 0;
+volatile int no_wdt = 0;
 
 void pin2Interrupt(void)
 {
@@ -18,11 +18,20 @@ void pin2Interrupt(void)
 
 ISR(WDT_vect)
 {
-  f_wdt += 1;
+  
 }
 
 void enterSleep(void)
 {
+  /*** Setup the WDT ***/
+  MCUSR &= ~(1<<WDRF); // Clear the reset flag
+  WDTCSR |= (1<<WDCE) | (1<<WDE); //In order to change WDE or the prescaler, we need to set WDCE (This will allow updates for 4 clock cycles)
+  WDTCSR = 1<<WDP0 | 1<<WDP3; // set new watchdog timeout prescaler value : 8.0 seconds
+  WDTCSR |= _BV(WDIE); // Enable the WD interrupt (note no reset)
+
+  if(no_wdt)    // changer mo_wdt qq par avec un bouton ?
+    wdt_disable();
+  
   ADCSRA &= ~(1 << ADEN);   // ADC OFF
   set_sleep_mode(SLEEP_MODE_PWR_DOWN);
   cli();
@@ -49,22 +58,6 @@ void setup()
   
   pinMode(pin2, INPUT);
   pinMode(LEDR, OUTPUT);
-
-  /*** Setup the WDT ***/
-  
-  /* Clear the reset flag. */
-  MCUSR &= ~(1<<WDRF);
-  
-  /* In order to change WDE or the prescaler, we need to
-   * set WDCE (This will allow updates for 4 clock cycles).
-   */
-  WDTCSR |= (1<<WDCE) | (1<<WDE);
-
-  /* set new watchdog timeout prescaler value */
-  WDTCSR = 1<<WDP0 | 1<<WDP3; /* 8.0 seconds */
-  
-  /* Enable the WD interrupt (note no reset). */
-  WDTCSR |= _BV(WDIE);
 }
 
 int seconds = 0;
