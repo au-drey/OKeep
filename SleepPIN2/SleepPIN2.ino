@@ -50,8 +50,21 @@ void setup()
   pinMode(pin2, INPUT);
   pinMode(LEDR, OUTPUT);
 
-  // setup the watchdog timer
+  /*** Setup the WDT ***/
+  
+  /* Clear the reset flag. */
   MCUSR &= ~(1<<WDRF);
+  
+  /* In order to change WDE or the prescaler, we need to
+   * set WDCE (This will allow updates for 4 clock cycles).
+   */
+  WDTCSR |= (1<<WDCE) | (1<<WDE);
+
+  /* set new watchdog timeout prescaler value */
+  WDTCSR = 1<<WDP0 | 1<<WDP3; /* 8.0 seconds */
+  
+  /* Enable the WD interrupt (note no reset). */
+  WDTCSR |= _BV(WDIE);
 }
 
 int seconds = 0;
