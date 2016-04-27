@@ -19,7 +19,9 @@ void enterSleep(void)
   set_sleep_mode(SLEEP_MODE_PWR_DOWN);
   cli();
   sleep_enable();
-  sleep_bod_disable();
+  sleep_bod_disable(); // équivalent des 2 lignes qui suivent
+  //MCUCR = bit (BODS) | bit (BODSE);
+  //MCUCR = bit (BODS);
   sei();
   sleep_cpu();
   sleep_disable();
@@ -31,10 +33,11 @@ void setup()
 {
   Serial.begin(9600);
 
-  /*DDRD &= B00000011;  // pins 2-7 as inputs, 0 and 1 (RX and TX) not changed
-  DDRB = B00000000;   // pins 8-13 as inputs
-  PORTD |= B11111100; // enable pullups on pins 2-7, leaves 0 and 1 alone
-  PORTB |= B11111111; // enable pullups on pins 8-13*/
+  /*for(byte i=0; i<=A5; i++)
+  {
+    pinMode(i, INPUT);
+    digitalWrite(i, LOW);
+  }*/
   
   pinMode(pin2, INPUT);
   pinMode(LEDR, OUTPUT);
@@ -60,7 +63,7 @@ void loop()
     Serial.println("Entering sleep");
     delay(200);
     seconds = 0;
-    /* Setup pin2 as an interrupt and attach handler. */
+    // Setup pin2 as an interrupt and attach handler.
     attachInterrupt(0, pin2Interrupt, LOW);
     enterSleep();
     detachInterrupt(0);
