@@ -70,13 +70,6 @@ ISR(TIMER1_COMPA_vect)
 
 void loop()
 {
-  if(!digitalRead(BUTTONR))
-    blinker = 2;
-  if(!digitalRead(BUTTONL))
-    blinker = 1;
-  if(!digitalRead(BUTTONC))
-    blinker = 0;
-
   if(COMM.available())
   {
     cmd = COMM.read();
