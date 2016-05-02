@@ -1,8 +1,7 @@
 /***************************************************************************************
  *
  * Title:       Blinker
- * Description: De/Activates the blinker via Bluetooth
- * (Buttons send info to phone which then sends to helmet)
+ * Description: De/Activates the blinker with the buttons
  *
  ***************************************************************************************/
 #define LEDF 5
