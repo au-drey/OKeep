@@ -8,7 +8,7 @@
 
 int pin2 = 2;
 #define LEDR 7
-#define BTCMD 8
+#define BTCMD 8 // connected to GPIO9 on the RN-52, which must be pulled low for command mode
 
 char cmd;
 
