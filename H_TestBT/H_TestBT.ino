@@ -24,7 +24,7 @@ void setup()
   delay(1000);
   Serial.write("CMD\r");
   delay(100);
-  Serial.write("SN,Helmet\r");
+  Serial.write("SN,OKeep\r");
   delay(100);
   Serial.write("R,1\r");
   
