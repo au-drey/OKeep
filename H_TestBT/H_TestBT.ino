@@ -8,9 +8,11 @@
 
 int pin2 = 2;
 #define LEDR 7
-#define BTCMD 8 // connected to GPIO9 on the RN-52, which must be pulled low for command mode
+#define BTCMD 8
+#define NAME_SIZE 20
 
 char cmd;
+char device_name[NAME_SIZE+1]="OKeep";
 
 void setup()
 {
@@ -21,22 +23,23 @@ void setup()
   pinMode(BTCMD, OUTPUT);
 
   digitalWrite(BTCMD, LOW);
-  delay(1000);
-  Serial.write("CMD\r");
+  delay(100);
+  /*Serial.write("CMD\r");
   delay(100);
   Serial.write("SN,OKeep\r");
-  delay(100);
+  delay(100);*/
   Serial.write("R,1\r");
-  
   digitalWrite(BTCMD, HIGH);
 }
 
 void loop()
 {
-  digitalWrite(LEDR, HIGH);
+  int i=0;
+  /*digitalWrite(LEDR, HIGH);
   delay(500);
   digitalWrite(LEDR, LOW);
-  delay(500);
+  delay(500);*/
+  delay(100);
 
   if(Serial.available())
   {
@@ -45,8 +48,39 @@ void loop()
     delay(1);
     switch(cmd)
     {
-      case 'a':
-        Serial.print("Got an A\n");
+      case 'a':                  // to change the name of the device
+        Serial.print("New name :\n");
+        delay(10);
+        for(int n=0; n<NAME_SIZE; n++)
+          device_name[n] = ' '; // reset name
+        while(!Serial.available()){}  // wait for name to be written
+        
+        while(Serial.available())     // take all characters one by one
+        {
+          if(i<NAME_SIZE)
+            device_name[i] = (char) Serial.read();    // record name until full
+          else
+            Serial.read(); // remplace by clean buffer and break
+          i++;
+          delay(2);
+        }
+        i=0;
+        for(int n=0; n<NAME_SIZE; n++)
+          Serial.write(device_name[n]);
+        Serial.println(" ");
+        
+        digitalWrite(BTCMD, LOW);
+        delay(100);
+        Serial.write("CMD\r");
+        delay(100);
+        Serial.write("SN,");
+        for(int n=0; n<NAME_SIZE; n++)
+          Serial.write(device_name[n]);
+        Serial.write("\r");
+        delay(100);
+        Serial.write("R,1\r");
+        digitalWrite(BTCMD, HIGH);
+  
         break;
 
       case 'b':
