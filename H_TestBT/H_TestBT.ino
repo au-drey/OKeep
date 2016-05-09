@@ -60,7 +60,7 @@ void loop()
           if(i<NAME_SIZE)
             device_name[i] = (char) Serial.read();    // record name until full
           else
-            Serial.read(); // remplace by clean buffer and break
+            Serial.read(); // replace by clean buffer and break ?
           i++;
           delay(2);
         }
