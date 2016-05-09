@@ -4,23 +4,31 @@
  * Description: De/Activates the blinker with the buttons
  *
  ***************************************************************************************/
-#define LEDF 5
-#define LEDB 16
-#define LEDR 8
-#define LEDL 9
+#define LEDF 3
+#define LEDB 9
+#define LEDR 6
+#define LEDL 5
 
-#define COMM Serial1
+#define COMM Serial // changed because no Serial1 on new board
 
 volatile int blinker = 0;
 int del = 40000; // 15625 = 1 sec.
 
 char cmd;
 
-int intensity = 200;
+int intensity = 0;
 bool on = 0;
 
 void setup()
 {
+  /* // Test LEDF
+  DDRD |= 1 << PORTD3;
+  while(1)
+  {
+    PORTD ^= 1 << PORTD3;
+    delay(1000);
+  }*/
+  
   pinMode(LEDF, OUTPUT);
   pinMode(LEDB, OUTPUT);
   pinMode(LEDL, OUTPUT);
@@ -75,7 +83,7 @@ void loop()
     delay(1);
     switch(cmd)
     {
-      case 'a':
+      case 'a':   // LEDF ON/OFF
         if(on)
         {
           analogWrite(LEDF, 0);
@@ -92,7 +100,7 @@ void loop()
         }
         break;
 
-      case 'b':
+      case 'b':   //Intensity ++
         intensity += 50;
         if(intensity > 255)
           intensity = 255;
@@ -102,7 +110,7 @@ void loop()
         COMM.println(intensity);
         break;
 
-      case 'c':
+      case 'c':   // Intensity --
         intensity -= 50;
         if(intensity <= 0)
         {
@@ -114,11 +122,11 @@ void loop()
         COMM.println(intensity);
         break;
 
-      case 'd':
+      case 'r': //right
         blinker = 2;
-      case 'g':
+      case 'l': // left
         blinker = 1;
-      case 's':
+      case 's': // stop
         blinker = 0;
     }
   }
