@@ -16,7 +16,7 @@ int del = 40000; // 15625 = 1 sec.
 
 char cmd;
 
-int intensity = 0;
+int intensity = 200;
 bool on = 0;
 
 void setup()
