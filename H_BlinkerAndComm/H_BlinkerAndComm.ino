@@ -5,7 +5,7 @@
  *
  ***************************************************************************************/
 #define LEDF 3
-#define LEDB 9
+#define LEDB 9  // Problem : timer1 breaks analogWrite() for Pin 9&10
 #define LEDR 6
 #define LEDL 5
 
@@ -17,18 +17,11 @@ int del = 40000; // 15625 = 1 sec.
 char cmd;
 
 int intensity = 200;
-bool on = 0;
+bool onF = 0;
+bool onB = 0;
 
 void setup()
-{
-  /* // Test LEDF
-  DDRD |= 1 << PORTD3;
-  while(1)
-  {
-    PORTD ^= 1 << PORTD3;
-    delay(1000);
-  }*/
-  
+{  
   pinMode(LEDF, OUTPUT);
   pinMode(LEDB, OUTPUT);
   pinMode(LEDL, OUTPUT);
@@ -40,7 +33,7 @@ void setup()
   digitalWrite(LEDR, LOW);
 
   COMM.begin(9600);
-
+  
   cli(); // disable interrupts
 //  PRRO &= ~(1 << PRTIM1); // enable timer1, enabled by default
   TIMSK1 |= (1 << OCIE1A); //enable output compare A
@@ -83,39 +76,73 @@ void loop()
     delay(1);
     switch(cmd)
     {
-      case 'a':   // LEDF ON/OFF
-        if(on)
+      case 'f':   // LEDF ON/OFF
+        if(onF)
         {
           analogWrite(LEDF, 0);
-          on = 0;
+          onF = 0;
           COMM.print("OFF\n");
-          delay(500);
+          delay(100);
         }
         else
         {
           analogWrite(LEDF, 180);
-          on  = 1;
+          onF  = 1;
           COMM.print("ON\n");
-          delay(500);
+          delay(100);
+        }
+        break;
+        
+      case 'b':   // LEDB ON/OFF
+        if(onB)
+        {
+          digitalWrite(LEDB, LOW);
+          onB = 0;
+          COMM.print("OFF B\n");
+          delay(100);
+        }
+        else
+        {
+          digitalWrite(LEDB, HIGH);
+          onB  = 1;
+          COMM.print("ON B\n");
+          delay(100);
         }
         break;
 
-      case 'b':   //Intensity ++
-        intensity += 50;
+      case 'n':   // LEDB ON/OFF
+        if(onB)
+        {
+          analogWrite(LEDB, 0);
+          onB = 0;
+          COMM.print("OFF N\n");
+          delay(100);
+        }
+        else
+        {
+          analogWrite(LEDB, 180);
+          onB  = 1;
+          COMM.print("ON N\n");
+          delay(100);
+        }
+        break;
+
+      case 'p':   //Intensity ++
+        intensity += 20;
         if(intensity > 255)
           intensity = 255;
         analogWrite(LEDF, intensity);
-        on = 1;
+        onF = 1;
         COMM.print("Intensity = ");
         COMM.println(intensity);
         break;
 
-      case 'c':   // Intensity --
-        intensity -= 50;
+      case 'm':   // Intensity --
+        intensity -= 20;
         if(intensity <= 0)
         {
           intensity = 0;
-          on = 0;
+          onF= 0;
         }
         analogWrite(LEDF, intensity);
         COMM.print("Intensity = ");
@@ -124,10 +151,13 @@ void loop()
 
       case 'r': //right
         blinker = 2;
+        break;
       case 'l': // left
         blinker = 1;
+        break;
       case 's': // stop
         blinker = 0;
+        break;
     }
   }
 }
