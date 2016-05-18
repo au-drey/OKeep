@@ -32,7 +32,13 @@ void setup()
   digitalWrite(LEDL, LOW);
   digitalWrite(LEDR, LOW);
 
-  COMM.begin(9600);
+  COMM.begin(115200);
+
+  DDRB |= (1 << PORTB7); // allumer le BT
+  PORTB |= (1 << PORTB7);
+
+  DDRC |= (1 << PORTC1); // allumer l'ampli
+  PORTC |= (1 << PORTC1);
   
   cli(); // disable interrupts
 //  PRRO &= ~(1 << PRTIM1); // enable timer1, enabled by default
