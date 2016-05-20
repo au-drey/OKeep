@@ -6,12 +6,13 @@
 #include <avr/power.h>
 #include <avr/wdt.h>
 
-int pin2 = 2;
-#define LEDR 7
+// int pin2 = 2;
+// #define LEDR 7
 #define NAME_SIZE 20
 
 char cmd;
 char device_name[NAME_SIZE+1]="OKeep";
+void SetName();
 
 void setup()
 {
@@ -20,22 +21,24 @@ void setup()
   PORTB |= 1 << PORTB7;
 
   // Enable audio amp
-  DDRC |= (1<<PORTC1);
-  PORTC |= (1<<PORTC1);
+  /*DDRC |= (1<<PORTC1);
+  PORTC |= (1<<PORTC1);*/
+  
+  Serial.begin(9600);
+  delay(100);
 
 /****   Set name   ****/
   // Enter cmd mode
   DDRB |= 1 << PORTB6;
   PORTB &= ~(1 << PORTB6);
 
-  Serial.begin(115200);
   delay(100);
   Serial.print("CMD\r\n");
   delay(1000); // 500 pas assez long
-  Serial.print("SN,Fourmi\r\n");
-  delay(100);
+  Serial.print("SN,poster\r\n");
+  delay(1000);
   Serial.print("R,1\r\n");
-  delay(100);
+  delay(1000);
   // Exit cmd mode
   PORTB |= 1 << PORTB6;
   delay(100);
@@ -44,26 +47,24 @@ void setup()
   PORTB &= ~(1 << PORTB7);
   delay(1000);
   PORTB |= 1 << PORTB7;
+  delay(1000);
 /************************/
- 
-  pinMode(pin2, INPUT);
-  pinMode(LEDR, OUTPUT);
+  
+  //SetName();
+
+  // pinMode(pin2, INPUT);
+  // pinMode(LEDR, OUTPUT);
 }
 
 void loop()
 {
-  //int i=0;
-  /*digitalWrite(LEDR, HIGH);
-  delay(500);
-  digitalWrite(LEDR, LOW);
-  delay(500);*/
-  Serial.println("Test");
+  int i=0;
   delay(500);
   
- /* if(Serial.available())
+  if(Serial.available())
   {
-    cmd = Serial.read();
-    //Serial.println(cmd);
+    cmd = Serial.read(); // Serial.read() = -1 if nothing available
+    Serial.println(cmd);
     delay(1);
     switch(cmd)
     {
@@ -85,30 +86,22 @@ void loop()
         }
         i=0;
         for(int n=0; n<NAME_SIZE; n++)
-          Serial.write(device_name[n]);
+          Serial.print(device_name[n]);
         Serial.println(" ");
         
-        digitalWrite(BTCMD, LOW);
-        delay(100);
-        Serial.write("CMD\r");
-        delay(100);
-        Serial.write("SN,");
-        for(int n=0; n<NAME_SIZE; n++)
-          Serial.write(device_name[n]);
-        Serial.write("\r");
-        delay(100);
-        Serial.write("R,1\r");
-        digitalWrite(BTCMD, HIGH);
-  
+        //SetName();
+ 
         break;
 
       case 'b':
         Serial.print("Got a B\n");
+        delay(100);
         break;
 
       case 'c':
         Serial.print("Got a C\n");
-        digitalWrite(BTCMD, LOW);
+        delay(100);
+        /*digitalWrite(BTCMD, LOW);
         delay(100);
         Serial.write("CMD\r");
         delay(100);
@@ -117,13 +110,46 @@ void loop()
         Serial.write("Y,0\r");
         delay(100);
         Serial.write("R,1\r");
-        digitalWrite(BTCMD, HIGH);
+        digitalWrite(BTCMD, HIGH);*/
         break;
 
       default:
         Serial.print(cmd);
         Serial.print(" - Unknown command\n");
+        delay(100);
         break;
     }
-  } */
+  }
 }
+
+void SetName()
+{
+  /****   Set name   ****/
+  // Enter cmd mode
+  DDRB |= 1 << PORTB6;
+  PORTB &= ~(1 << PORTB6);
+
+  delay(100);
+  Serial.print("CMD\r\n");
+  delay(1000); // 500 pas assez long
+  Serial.print("SN,poster\r\n");
+  delay(1000);
+  Serial.print("R,1\r\n");
+  delay(1000);
+  // Exit cmd mode
+  PORTB |= 1 << PORTB6;
+  delay(100);
+  
+  // Power cycle
+  PORTB &= ~(1 << PORTB7);
+  delay(1000);
+  PORTB |= 1 << PORTB7;
+  delay(1000);
+/************************/
+
+}
+/*
+        Serial.write("SN,");
+        for(int n=0; n<NAME_SIZE; n++)
+          Serial.write(device_name[n]);
+        Serial.write("\r");*/
