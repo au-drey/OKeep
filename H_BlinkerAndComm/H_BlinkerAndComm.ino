@@ -32,7 +32,7 @@ void setup()
   digitalWrite(LEDL, LOW);
   digitalWrite(LEDR, LOW);
 
-  COMM.begin(115200);
+  COMM.begin(9600);
 
   DDRB |= (1 << PORTB7); // allumer le BT
   PORTB |= (1 << PORTB7);
