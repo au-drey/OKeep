@@ -1,5 +1,12 @@
 // Look for all the comments and deal with them !
 // create modules, improve code
+// Make functions in other modules :
+// - switch case cmd
+// - setup
+// - set name
+// Already :
+// - sleep
+// - ISR x2, interrupt
 
 /***************************************************************************************
  *
