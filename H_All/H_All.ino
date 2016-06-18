@@ -1,12 +1,12 @@
-// Look for all the comments and deal with them !
-// create modules, improve code
-// Make functions in other modules :
+// Make functions:
 // - switch case cmd
 // - setup
 // - set name
 // Already :
 // - sleep
 // - ISR x2, interrupt
+
+// TO DO : Battery level, volume
 
 /***************************************************************************************
  *
@@ -43,33 +43,33 @@ int seconds = 0;      // Seconds counter
 int del = 40000;      // (15625 = 1 sec.)
 int intensity = 200;  // Light intensity (front)
 
-char cmd; // BT command received, to analyse
+char cmd; // To store BT command received
 
-//bool connected = 1; // if not for a while, go sleep. Not used yet
+bool in_use = 1;  // If 0 (not in use), go to sleep
 bool onF = 0;   // 0 if LEDF is off, 1 if on
 bool onB = 0;   // same for LEDB
 
 void setup()
 {  
-  //pinMode(LEDF, OUTPUT);
+  //pinMode(LEDF, OUTPUT);  // dead driver
   pinMode(LEDB, OUTPUT);
   pinMode(LEDL, OUTPUT);
   pinMode(LEDR, OUTPUT);
   
   pinMode(pin2, INPUT);
   
-  //digitalWrite(LEDF, LOW);
+  //digitalWrite(LEDF, LOW);  // dead driver
   digitalWrite(LEDB, LOW);
   digitalWrite(LEDL, LOW);
   digitalWrite(LEDR, LOW);
 
   COMM.begin(9600);
 
-  DDRB |= (1 << PORTB7); // allumer le BT
-  PORTB |= (1 << PORTB7);
+  DDRB |= (1 << PORTB7);  // Set as output
+  PORTB |= (1 << PORTB7); // Turn Bluetooth ON
 
-  /*DDRC |= (1 << PORTC1); // allumer l'ampli
-  PORTC |= (1 << PORTC1);*/
+  /*DDRC |= (1 << PORTC1);  // Set as output
+  PORTC |= (1 << PORTC1);*/ // Turn ampli ON
 
 /****   Set name   ****/
   // enter cmd mode
@@ -85,7 +85,7 @@ void setup()
   Serial.print("R,1\r\n");
   delay(1000);
 
-  PORTB |= 1 << PORTB6;// exit cmd mode*/
+  PORTB |= 1 << PORTB6;// exit cmd mode
   delay(100);
 /*********************/
  
@@ -139,16 +139,18 @@ ISR(TIMER1_COMPA_vect)      // Blinker
 /***************************************************************************************
                                      SLEEP FUNCTION
  ***************************************************************************************/
-// Add turning off the BT (and back on)
+
 void enterSleep(void)
 {
+  PORTB &= ~(1 << PORTB7); // Turn Bluetooth OFF
+  
   /*** Setup the WDT ***/
   MCUSR &= ~(1<<WDRF); // Clear the reset flag
   WDTCSR |= (1<<WDCE) | (1<<WDE); //In order to change WDE or the prescaler, we need to set WDCE (This will allow updates for 4 clock cycles)
   WDTCSR = 1<<WDP0 | 1<<WDP3; // set new watchdog timeout prescaler value : 8.0 seconds
   WDTCSR |= _BV(WDIE); // Enable the WD interrupt (note no reset)
 
-  if(no_wdt)    // changer no_wdt qq par avec un bouton ?
+  if(no_wdt)    // Never changed ... use a button ? BT cmd ?
     wdt_disable();
   
   ADCSRA &= ~(1 << ADEN);   // ADC OFF
@@ -162,7 +164,9 @@ void enterSleep(void)
   sleep_cpu();
   sleep_disable();
   sei();
-  ADCSRA |= (1 << ADEN);    // ADC OFF
+  ADCSRA |= (1 << ADEN);    // ADC ON
+  
+  PORTB |= (1 << PORTB7); // Turn Bluetooth back on
 }
 
 /***************************************************************************************
@@ -217,7 +221,7 @@ void loop()
         Serial.print("R,1\r\n");
         delay(1000);
 
-        PORTB |= 1 << PORTB6;// exit cmd mode*/
+        PORTB |= 1 << PORTB6;// exit cmd mode
         delay(100);
      /*********************/
 
@@ -314,7 +318,7 @@ void loop()
         blinker = 0;
         break;
 
-      case 'z': // sleep zzzzz
+      /*case 'z': // sleep zzzzz
         Serial.println("Entering sleep");
         delay(200);
         seconds = 0;
@@ -323,18 +327,14 @@ void loop()
         enterSleep();
         detachInterrupt(0);
         delay(200);
-        Serial.println("I'm back bitches!");
+        Serial.println("I'm awake!");*/
     }
   }
   
-/*  for(i=0; i<seconds;i++)
-  { digitalWrite(LEDR, HIGH);
-    delay(500);
-    digitalWrite(LEDR, LOW);
-    delay(500);
-  }
+  // Check pin of future sliding switch to know if in_use or not
+  // in_use = digitalRead(SlideSwitch);
   
-  if((seconds == 3) && (!connected))  // check and do condition
+  if(!in_use)
   {
     Serial.println("Entering sleep");
     delay(200);
@@ -343,6 +343,6 @@ void loop()
     attachInterrupt(0, pin2Interrupt, LOW);
     enterSleep();
     detachInterrupt(0);
-  }*/
+  }
 
 }
