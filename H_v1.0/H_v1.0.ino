@@ -23,7 +23,7 @@
 #include <avr/power.h>
 #include <avr/wdt.h>
 
-//#define LEDF 3 // driver is dead for now
+#define LEDF 3 // driver is dead for now
 #define LEDB 9  // Problem : timer1 breaks analogWrite() for Pin 9&10
 #define LEDR 6
 #define LEDL 5
@@ -48,17 +48,18 @@ char cmd; // To store BT command received
 bool in_use = 1;  // If 0 (not in use), go to sleep
 bool onF = 0;   // 0 if LEDF is off, 1 if on
 bool onB = 0;   // same for LEDB
+bool onA = 0;   // same for ampli
 
 void setup()
 {  
-  //pinMode(LEDF, OUTPUT);  // dead driver
+  pinMode(LEDF, OUTPUT);  // dead driver
   pinMode(LEDB, OUTPUT);
   pinMode(LEDL, OUTPUT);
   pinMode(LEDR, OUTPUT);
   
   pinMode(pin2, INPUT);
   
-  //digitalWrite(LEDF, LOW);  // dead driver
+  digitalWrite(LEDF, LOW);  // dead driver
   digitalWrite(LEDB, LOW);
   digitalWrite(LEDL, LOW);
   digitalWrite(LEDR, LOW);
@@ -232,21 +233,21 @@ void loop()
       case 'f':   // LEDF ON/OFF
         if(onF)
         {
-          analogWrite(LEDB, 0);
+          analogWrite(LEDF, 0);
           onF = 0;
           COMM.print("OFF\n");
           delay(100);
         }
         else
         {
-          analogWrite(LEDB, 180);
+          analogWrite(LEDF, 180);
           onF  = 1;
           COMM.print("ON\n");
           delay(100);
         }
         break;
         
-     /* case 'b':   // LEDB ON/OFF
+     case 'b':   // LEDB ON/OFF
         if(onB)
         {
           digitalWrite(LEDB, LOW);
@@ -261,8 +262,8 @@ void loop()
           COMM.print("ON B\n");
           delay(100);
         }
-        break;*/
-
+        break;
+        
       /*case 'n':   // LEDB ON/OFF
         if(onB)
         {
@@ -284,7 +285,7 @@ void loop()
         intensity += 20;
         if(intensity > 255)
           intensity = 255;
-        analogWrite(LEDB, intensity);
+        analogWrite(LEDF, intensity);
         onF = 1;
         COMM.print("Intensity = ");
         COMM.println(intensity);
@@ -297,7 +298,7 @@ void loop()
           intensity = 0;
           onF= 0;
         }
-        analogWrite(LEDB, intensity);
+        analogWrite(LEDF, intensity);
         COMM.print("Intensity = ");
         COMM.println(intensity);
         break;
